@@ -1,0 +1,183 @@
+<%- include('../views/partials/head') %>
+    <script>
+        $(function () {
+
+            var sku_array = <%- JSON.stringify(sku) %>
+
+                function simpleTemplating(data) {
+                    console.log(data)
+                    var html = '';
+                    $.each(data, function (index, item) {
+
+
+
+                        html += '<tr class="border-b border-gray-200"><td class="pl-2 sm:pl-10 pr-2 py-4"><div class="pl-4">' +
+                            '<p class="dark:text-gray-100 text-gray-800 text-xs sm:text-sm">' + item.name + '</p>' +
+                            '<span class="text-xs text-gray-600 dark:text-gray-400">' + item.title + '</span>' +
+                            '</div></div></td><td class="pr-2 pt-4 pb-5 text- gray-800 text-xs sm:text-sm"><div class="text-center flex flex-col"> <div>' +
+                            '<p class="dark:text-gray-100 text-gray-800 text-xs sm:text-sm pb-1">' + item.id + '</p> ' +
+                            '</div> </div></td><td class="pt-4 pb-5 dark:text-gray-100 text-gray-800  text-xs sm:text-sm text-center">' + item.date + '</td>';
+
+                        if (item.status == 'true') {
+                            html += '<td class="pr-5 pt-4 pb-5 text-green-400 text-xs sm:text-sm text-right">Success</td></tr>';
+                        } else {
+                            html += '<td class="pr-5 pt-4 pb-5 text-red-400 text-xs sm:text-sm text-right">Failed</td></tr>';
+                        }
+
+
+                    });
+
+                    return html;
+                }
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+
+
+            $('#pagination-container').pagination({
+                dataSource: sku_array,
+                pageSize: 10,
+                callback: function (sku_array, pagination) {
+                    var html = simpleTemplating(sku_array);
+                    $('.activityList').html(html);
+                }
+            })
+
+            $(document).on('click', '.updateSkuAll', function () {
+                var settings = { "url": "/admin/skuUpdater", "method": "POST", "headers": { "Content-Type": "application/json" }, "data": JSON.stringify(), };
+                $.ajax(settings).done(function (response) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Manual  update triggered.'
+                    })
+                });
+            });
+
+       
+        })
+    </script>
+
+
+    <style>
+        .checkbox:checked {
+            /* Apply class right-0*/
+            right: 0;
+        }
+
+        .checkbox:checked+.toggle-label {
+            /* Apply class bg-indigo-700 */
+            background-color: #4c51bf;
+        }
+
+        .paginationjs-pages ul {
+            display: flex;
+            justify-content: center;
+            ;
+        }
+    </style>
+
+    <!-- Page title starts -->
+    <div style="background-color:#c7a55d" class="relative z-10 bg-gray-800 pt-8 pb-16">
+        <div class="container px-6 mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between">
+            <div>
+                <p class="flex items-center text-gray-300 text-xs">
+                    <span class="cursor-pointer">Dashboard</span>
+                    <span class="mx-2">&gt;</span>
+                    <span class="cursor-pointer">API</span>
+                </p>
+                <h4 class="text-2xl font-bold leading-tight text-white">Bijoux Medusa Custom Apps</h4>
+            </div>
+        </div>
+    </div>
+    <!-- Page title ends -->
+    <div class="bg-gray-200 pb-10">
+        <div class="container px-6 mx-auto">
+            <div class="relative z-10 w-full">
+                <%- include('../views/partials/navigation') %>
+                    <div class="container mx-auto ">
+
+                        <h4 class="text-2xl font-bold leading-tight text-gray-800 mt-3">SKU Generator</h4>
+
+                        <div class="flex justify-between">
+                            <div
+                                class="w-11/12 mb-4 my-6 md:w-5/12 shadow sm:px-10 sm:py-6 py-4 px-4 bg-white rounded-md pb-0" style="padding:0px">
+                                <p class="mt-3 mx-5   text-lg text-gray-800 font-semibold pb-3">Automatically Update My Product SKUs
+                                </p>
+                                <p class="mx-5 text-sm text-gray-600 pb-3 font-normal">All new products will automatically be
+                                    updated with a SKU for each variant.</p>
+                                <div class="mx-5 w-12 h-6 cursor-pointer rounded-full relative shadow-sm">
+
+                                    <input type="checkbox" name="autoSkuCheckbox" id="autoSkuCheckbox"
+                                        class="focus:outline-none checkbox w-4 h-4 rounded-full bg-white absolute m-1 shadow-sm appearance-none cursor-pointer" />
+                                    <label for="autoSkuCheckbox"
+                                        class="toggle-label bg-gray-200 block w-12 h-6 overflow-hidden rounded-full bg-gray-300 cursor-pointer"></label>
+                                </div>
+                                
+                                <div class="mt-3 px-4 py-3 bg-gray-50 text-right sm:px-6">
+                                    <button data-function="sku_generator" type="submit"
+                                    class="settingsButton inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    Save
+                                </button>
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="w-11/12 mb-4 my-6 md:w-5/12 shadow sm:px-10 sm:py-6 py-4 px-4 bg-white rounded-md">
+                                <p class="text-lg text-gray-800 font-semibold pb-3">Update My Product SKUs Now</p>
+                                <p class="text-sm text-gray-600 pb-3 font-normal">This will start a function to update
+                                    all of your Product SKUs accross the store.</p>
+                                <button style="background-color:#c7a55d"
+                                    class="updateSkuAll text-white font-bold py-2 px-4 rounded">
+                                    Update
+                                </button>
+                                
+                                
+                            </div>
+
+                        </div>
+
+                        <h4 class="text-2xl font-bold leading-tight text-gray-800 mt-3">Activity</h4>
+
+
+                        <table class="w-full shadow text-left bg-white dark:bg-gray-800 mt-3">
+                            <thead>
+                                <tr class="border-b border-gray-300 dark:border-gray-200">
+                                    <th class="py-5 pl-2 sm:pl-10 w-1/4 text-base dark:text-gray-100 text-gray-800">
+                                        Product/Variant Title</th>
+                                    <th class="py-5 w-1/4 text-base dark:text-gray-100 text-gray-800 text-center pr-8">
+                                        Variant ID</th>
+                                    <th class="py-5 w-1/4 text-base dark:text-gray-100 text-gray-800 text-center">Timestamp
+                                    </th>
+                                    <th
+                                        class="py-5 w-1/4 text-base dark:text-gray-100 text-gray-800 text-right pr-2 sm:pr-10">
+                                        Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="activityList">
+                                
+                            </tbody>
+
+                           
+                        </table>
+
+                        <div id="pagination-container"></div>
+
+                    </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <%- include('../views/partials/footer') %>

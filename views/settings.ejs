@@ -1,0 +1,199 @@
+<%- include('../views/partials/head') %>
+    <!-- Page title starts -->
+    <div class="relative z-10 bg-gray-800 pt-8 pb-16" style="background-color: #c7a55d;">
+        <div class="container px-6 mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between">
+            <div>
+                <p class="flex items-center text-gray-300 text-xs">
+                    <span class="cursor-pointer">Dashboard</span>
+                    <span class="mx-2">&gt;</span>
+                    <span class="cursor-pointer">API</span>
+                </p>
+                <h4 class="text-2xl font-bold leading-tight text-white">Bijoux Medusa Custom Apps</h4>
+            </div>
+        </div>
+    </div>
+    <!-- Page title ends -->
+    <div class="bg-gray-200 pb-10 min-h-screen	">
+        <div class="container px-6 mx-auto">
+            <div class="relative z-10 w-full">
+                <%- include('../views/partials/navigation') %>
+                    
+                    
+                    <div class="container mx-auto">
+
+                        <div>
+                            <div class="md:grid md:grid-cols-3 md:gap-6">
+                                <div class="md:col-span-1">
+                                    <div class="px-4 sm:px-0">
+                                        <h3 class="text-lg font-medium leading-6 text-gray-900">Réglages (Settings)</h3>
+                                       
+                                    </div>
+                                </div>
+                                <div class="mt-5 md:mt-0 md:col-span-2">
+                                    <form action="#" method="POST">
+                                        <div class="shadow sm:rounded-md sm:overflow-hidden">
+                                            <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+                                            
+                                            <!-- Main Store Data -->
+                                                <div class="grid grid-cols-3 gap-6">
+                                                    <div class="col-span-3 sm:col-span-2">
+                                                        <label for="company_website"
+                                                            class="block text-sm font-medium text-gray-700">
+                                                            Boutique principale (Main Store)
+                                                        </label>
+                                                        <div class="mt-1 flex rounded-md shadow-sm h-10">
+                                                            <span
+                                                                class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                                                https://
+                                                            </span>
+                                                            
+                                                            <input type="text" style="border:1px solid lightgray" name="company_website_main_Store"
+                                                                id="company_website_main_Store"
+                                                                class="flex-1 block w-3/4  px-2 sm:text-sm border-gray-300 border-gray-300 bg-gray-50 focus-none"
+                                                                placeholder="example-store">
+                                                                
+                                                                <span
+                                                                class="inline-flex items-center px-3 rounded-r-md border  border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                                               .myshopify.com
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="grid grid-cols-3 gap-6">
+                                                    <div class="col-span-3 sm:col-span-2">
+                                                        <label for="company_website"
+                                                            class="block text-sm font-medium text-gray-700">
+                                                            Clé API (API Key)
+                                                        </label>
+                                                        <div class="mt-1 flex rounded-md shadow-sm h-10">
+                                                           
+                                                            
+                                                            <input type="text" style="border:1px solid lightgray" name="api_key"
+                                                                id="api_key_main_Store"
+                                                                class="flex-1 block w-3/4  px-2 sm:text-sm border-gray-300 border-gray-300 bg-gray-50 focus-none"
+                                                                placeholder="Password">
+                                                                
+                                                                
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                   
+                                                <div class="grid grid-cols-3 gap-6">
+                                                    <div class="col-span-3 sm:col-span-2">
+                                                        <label for="company_website"
+                                                            class="block text-sm font-medium text-gray-700">
+                                                            Mot de passe API (API Password)
+                                                        </label>
+                                                        <div class="mt-1 flex rounded-md shadow-sm h-10">
+                                                           
+                                                            
+                                                            <input type="password" style="border:1px solid lightgray" name="api_key"
+                                                                id="api_password_main_Store"
+                                                                class="flex-1 block w-3/4  px-2 sm:text-sm border-gray-300 border-gray-300 bg-gray-50 focus-none"
+                                                                placeholder="">
+                                                                
+                                                                
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                                <!-- Secondary Store-->
+                                                
+                                                
+                                                <div class="grid grid-cols-3 gap-6 mt-3">
+                                                    <div class="col-span-3 sm:col-span-2">
+                                                        <label for="company_website"
+                                                            class="block text-sm font-medium text-gray-700">
+                                                            Magasin secondaire (Secondary Store)
+                                                        </label>
+                                                        <div class="mt-1 flex rounded-md shadow-sm h-10">
+                                                            <span
+                                                                class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                                                https://
+                                                            </span>
+                                                            
+                                                            <input type="text" style="border:1px solid lightgray" name="company_website_secondary_Store"
+                                                                id="company_website_secondary_Store"
+                                                                class="flex-1 block w-3/4  px-2 sm:text-sm border-gray-300 border-gray-300 bg-gray-50 focus-none"
+                                                                placeholder="example-store">
+                                                                
+                                                                <span
+                                                                class="inline-flex items-center px-3 rounded-r-md border  border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                                               .myshopify.com
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="grid grid-cols-3 gap-6">
+                                                    <div class="col-span-3 sm:col-span-2">
+                                                        <label for="company_website"
+                                                            class="block text-sm font-medium text-gray-700">
+                                                            Clé API (API Key)
+                                                        </label>
+                                                        <div class="mt-1 flex rounded-md shadow-sm h-10">
+                                                           
+                                                            
+                                                            <input type="text" style="border:1px solid lightgray" name="api_key"
+                                                                id="api_key_secondary_Store"
+                                                                class="flex-1 block w-3/4  px-2 sm:text-sm border-gray-300 border-gray-300 bg-gray-50 focus-none"
+                                                                placeholder="Password">
+                                                                
+                                                                
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                   
+                                                <div class="grid grid-cols-3 gap-6">
+                                                    <div class="col-span-3 sm:col-span-2">
+                                                        <label for="company_website"
+                                                            class="block text-sm font-medium text-gray-700">
+                                                            Mot de passe API (API Password)
+                                                        </label>
+                                                        <div class="mt-1 flex rounded-md shadow-sm h-10">
+                                                           
+                                                            
+                                                            <input type="password" style="border:1px solid lightgray" name="api_key"
+                                                                id="api_password_secondary_Store"
+                                                                class="flex-1 block w-3/4  px-2 sm:text-sm border-gray-300 border-gray-300 bg-gray-50 focus-none"
+                                                                placeholder="">
+                                                                
+                                                                
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                              
+                                                </div>
+                                            </div>
+                                            <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                                                <button data-function="site_settings" type="submit"
+                                                class="settingsButton inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                Save
+                                            </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="hidden sm:block" aria-hidden="true">
+                            <div class="py-5">
+                                <div class="border-t border-gray-200"></div>
+                            </div>
+                        </div>
+
+  
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../views/partials/footer') %>

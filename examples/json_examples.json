@@ -1,0 +1,49 @@
+{
+    "currency": [
+        {
+            "automatic": true,
+            "to_the_nearest_dollar": true,
+            "scheduled_updates": true,
+            "s_update_one": "01:00",
+            "s_update_two": "12:00",
+            "s_update_three": "20:00",
+            "buffer": true,
+            "buffer_amount": 0.30
+        }
+    ],
+    "sku_generator": [
+        {
+            "automatic": true,
+            "prefix": "BM"
+        }
+    ],
+    "site_settings": [
+        {
+            "store_one_url": "store-store",
+            "store_one_api": "xHak2nc",
+            "store_one_password": "hajjaf",
+            "store_two_url": "store-store",
+            "store_two_api": "xHak2nc",
+            "store_two_password": "hajjaf"
+        }
+    ],
+    "translate": [
+        {
+            "api_key": "17949433"
+        }
+    ]
+},
+
+
+{
+    "variant_id":100,
+    "timestamp":"",
+    "status":true,
+    "product_title":"A hat",
+    "variant_title":"Blue"
+}
+
+{
+    "main_product_id":10000,
+    "secondary_product_id": 2000
+}

@@ -1,0 +1,44 @@
+<%- include('../views/partials/head') %>
+
+<script>
+$(function(){
+if(window.location.search == '?failed_auth'){
+$('.errorLogin').removeClass('hidden').text('Unauthorized access! User not found.')
+setTimeout(function(){ 
+	$('.errorLogin').addClass('hidden').text('')
+}, 3000);
+}
+})
+</script>
+
+<section style="background-color:#c7a55d" class="h-screen">
+
+	<div class="mx-auto flex justify-center lg:items-center h-full">
+		<div id="login" class="w-full sm:w-4/6 md:w-3/6 lg:w-4/12 xl:w-3/12 text-white py-12 px-2 sm:px-0">
+			<div class="pt-0 px-2 flex flex-col items-center justify-center">
+				<img src='https://cdn.shopify.com/s/files/1/1868/1491/files/Logo_MEDUSA_ST-VALENTIN_410x.png?v=1612635987'>
+			</div>
+			<form action="/admin/login" method="post">
+			<div class="mt-12 w-full px-2 sm:px-6">
+				<div class="flex flex-col mt-5">
+					<label for="email" class="text-lg font-semibold leading-tight">Username</label>
+					<input palaceholder="Username" required id="email" name="username" class="h-10 px-2 w-full text-black  rounded mt-2 focus:outline-none shadow" type="text" />
+				</div>
+				<div class="flex flex-col mt-5">
+					<label for="password" class="text-lg font-semibold fleading-tight">Password</label>
+					<input required id="password" name="password" class="h-10 px-2 w-full text-black rounded mt-2 focus:outline-none shadow" type="password" />
+				</div>
+			</div>
+			<div class="px-2 sm:px-6">
+				<input  type="submit" value="Submit" class="focus:outline-none w-full transition duration-150 ease-in-out hover:bg-yellow-600 rounded text-white bg-black px-8 py-3 text-sm mt-6">
+				<p class="hidden errorLogin text-red text-lg text-center mt-2" style="color:red;"></p>
+				
+				<p class="mt-12 text-xs text-center">Don’t Have An Account? <a class="underline" href="javascript: void(0)">Contact your system administrator</a></p>
+			</div>
+		</form>
+		
+	</div>
+	
+	
+  
+</section>

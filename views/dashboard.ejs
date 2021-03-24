@@ -1,0 +1,312 @@
+<%- include('../views/partials/head') %>
+
+    <style>
+        .checkbox:checked {
+            /* Apply class right-0*/
+            right: 0;
+        }
+
+        .checkbox:checked+.toggle-label {
+            /* Apply class bg-indigo-700 */
+            background-color: #4c51bf;
+        }
+    </style>
+
+    <!-- Page title starts -->
+    <div class="relative z-10 bg-gray-800 pt-8 pb-16" style="background-color: #c7a55d;">
+        <div class="container px-6 mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between">
+            <div>
+                <p class="flex items-center text-gray-300 text-xs">
+                    <span class="cursor-pointer">Dashboard</span>
+                    <span class="mx-2">&gt;</span>
+                    <span class="cursor-pointer">API</span>
+                </p>
+                <h4 class="text-2xl font-bold leading-tight text-white">Bijoux Medusa Custom Apps</h4>
+            </div>
+        </div>
+    </div>
+    <!-- Page title ends -->
+    <div class="bg-gray-200 pb-10 h-full">
+        <div class="container px-6 mx-auto min-h-full">
+            <div class="relative z-10 w-full">
+                <div class="w-full -mt-8 h-auto">
+                    <%- include('../views/partials/navigation') %>
+                        <div class="container mx-auto">
+
+                            <h4 class="text-2xl font-bold leading-tight text-gray-800 mt-3">Currency Converter</h4>
+
+                            <div class="flex justify-between">
+                                <div class="relative w-11/12 mb-0 pb-0 my-6 md:w-5/12 shadow py-6  bg-white rounded-md">
+
+                                    <div class="px-8 mt-0">
+                                        <p class="text-lg text-gray-800 font-semibold pb-3">Update prices now
+                                        </p>
+                                        <p class="text-sm text-gray-600 pb-3 font-normal">This will trigger an update
+                                            using the current settings. This may take some time.</p>
+                                        <div class="">
+                                            <button type="submit"
+                                                class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                Update Now
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="px-8 mt-3">
+                                        <p class="text-lg text-gray-800 font-semibold pb-3">Automatically Convert Prices
+                                        </p>
+                                        <p class="text-sm text-gray-600 pb-3 font-normal">This will automatically
+                                            convert your
+                                            prices as products are updated/created on your main store.</p>
+                                        <div class="w-12 h-6 cursor-pointer rounded-full relative shadow-sm">
+                                            <input type="checkbox" name="currency_toggle" id="currency_toggle"
+                                                class="focus:outline-none checkbox w-4 h-4 rounded-full bg-white absolute m-1 shadow-sm appearance-none cursor-pointer" />
+                                            <label for="currency_toggle"
+                                                class="toggle-label bg-gray-200 block w-12 h-6 overflow-hidden rounded-full bg-gray-300 cursor-pointer"></label>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="mt-5 md:mt-0 md:col-span-2">
+                                        <form action="#" method="POST">
+                                            <div class=" overflow-hidden sm:rounded-md">
+                                                <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+                                                    <fieldset>
+                                                        <legend class="text-base font-medium text-gray-900">Rules
+                                                        </legend>
+                                                        <div class="mt-4 space-y-4">
+                                                            <div class="flex items-start">
+                                                                <div class="flex items-center h-5">
+                                                                    <input id="round_closest" name="round_closest"
+                                                                        type="checkbox"
+                                                                        class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                                                </div>
+                                                                <div class="ml-3 text-sm">
+                                                                    <label for="round_closest"
+                                                                        class="font-medium text-gray-700">Round to
+                                                                        nearest dollar</label>
+                                                                    <p class="text-gray-500">Round the conversion to the
+                                                                        nearest dollar. Eg: $56.86 > $57.00 </p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex items-start">
+                                                                <div class="flex items-center h-5">
+                                                                    <input id="scheduled" name="scheduled"
+                                                                        type="checkbox"
+                                                                        class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                                                </div>
+                                                                <div class="ml-3 text-sm">
+                                                                    <label for="scheduled"
+                                                                        class="font-medium text-gray-700">Scheduled
+                                                                        updates</label>
+                                                                    <p class="text-gray-500">Schedule daily price
+                                                                        updates depending on currency change.
+                                                                    </p>
+                                                                    
+                                                                    <div class="timeStampst hidden">
+                                                                    <p class="text-gray-500 mt-2">1st Update</p>
+                                                                    
+                                                                    <div class="mt-1 flex rounded-md border p-1 px-2 h-10 w-5/12 bg-gray-50">
+                                                                        <div class="flex ">
+                                                                            <select name="first_hours" class=" first_hours text-xl appearance-none outline-none ">
+                                                                                <option value="1">1</option>
+                                                                                <option value="2">2</option>
+                                                                                <option value="3">3</option>
+                                                                                <option value="4">4</option>
+                                                                                <option value="5">5</option>
+                                                                                <option value="6">6</option>
+                                                                                <option value="7">7</option>
+                                                                                <option value="8">8</option>
+                                                                                <option value="9">9</option>
+                                                                                <option value="10">10</option>
+                                                                                <option value="11">11</option>
+                                                                                <option value="12">12</option>
+                                                                                <option value="13">13</option>
+                                                                                <option value="14">14</option>
+                                                                                <option value="15">15</option>
+                                                                                <option value="16">16</option>
+                                                                                <option value="17">17</option>
+                                                                                <option value="18">18</option>
+                                                                                <option value="19">19</option>
+                                                                                <option value="20">20</option>
+                                                                                <option value="21">21</option>
+                                                                                <option value="22">22</option>
+                                                                                <option value="23">23</option>
+                                                                                <option value="24">24</option>
+                                                                            </select>
+                                                                            <span class="text-xl mr-3">:</span>
+                                                                            <select name="first_minutes" class="first_minutes bg-transparent text-xl appearance-none outline-none mr-4">
+                                                                              <option value="0">00</option>
+                                                                              <option value="30">30</option>
+                                                                            </select>
+                                                                          </div>
+                                                                    </div>
+                                                                    
+                                                                    <p class="text-gray-500 mt-2">2nd Update</p>
+                                                                    
+                                                                    <div class="mt-1 flex rounded-md border p-1 px-2 h-10 w-5/12 bg-gray-50">
+                                                                        <div class="flex ">
+                                                                            <select name="second_hours" class="second_hours text-xl appearance-none outline-none ">
+                                                                                <option value="1">1</option>
+                                                                                <option value="2">2</option>
+                                                                                <option value="3">3</option>
+                                                                                <option value="4">4</option>
+                                                                                <option value="5">5</option>
+                                                                                <option value="6">6</option>
+                                                                                <option value="7">7</option>
+                                                                                <option value="8">8</option>
+                                                                                <option value="9">9</option>
+                                                                                <option value="10">10</option>
+                                                                                <option value="11">11</option>
+                                                                                <option value="12">12</option>
+                                                                                <option value="13">13</option>
+                                                                                <option value="14">14</option>
+                                                                                <option value="15">15</option>
+                                                                                <option value="16">16</option>
+                                                                                <option value="17">17</option>
+                                                                                <option value="18">18</option>
+                                                                                <option value="19">19</option>
+                                                                                <option value="20">20</option>
+                                                                                <option value="21">21</option>
+                                                                                <option value="22">22</option>
+                                                                                <option value="23">23</option>
+                                                                                <option value="24">24</option>
+                                                                            </select>
+                                                                            <span class="text-xl mr-3">:</span>
+                                                                            <select name="second_minutes" class="second_minutes bg-transparent text-xl appearance-none outline-none mr-4">
+                                                                              <option value="0">00</option>
+                                                                              <option value="30">30</option>
+                                                                            </select>
+                                                                          </div>
+                                                                    </div>
+                                                                    
+                                                                    
+                                                                    <p class="text-gray-500 mt-2">3rd Update</p>
+                                                                    
+                                                                    <div class="mt-1 flex rounded-md border p-1 px-2 h-10 w-5/12 bg-gray-50">
+                                                                        <div class="flex ">
+                                                                            <select name="third_hours" class="third_hours text-xl appearance-none outline-none ">
+                                                                                <option value="1">1</option>
+                                                                                <option value="2">2</option>
+                                                                                <option value="3">3</option>
+                                                                                <option value="4">4</option>
+                                                                                <option value="5">5</option>
+                                                                                <option value="6">6</option>
+                                                                                <option value="7">7</option>
+                                                                                <option value="8">8</option>
+                                                                                <option value="9">9</option>
+                                                                                <option value="10">10</option>
+                                                                                <option value="11">11</option>
+                                                                                <option value="12">12</option>
+                                                                                <option value="13">13</option>
+                                                                                <option value="14">14</option>
+                                                                                <option value="15">15</option>
+                                                                                <option value="16">16</option>
+                                                                                <option value="17">17</option>
+                                                                                <option value="18">18</option>
+                                                                                <option value="19">19</option>
+                                                                                <option value="20">20</option>
+                                                                                <option value="21">21</option>
+                                                                                <option value="22">22</option>
+                                                                                <option value="23">23</option>
+                                                                                <option value="24">24</option>
+                                                                            </select>
+                                                                            <span class="text-xl mr-3">:</span>
+                                                                            <select name="third_minutes" class="third_minutes bg-transparent text-xl appearance-none outline-none mr-4">
+                                                                              <option value="0">00</option>
+                                                                              <option value="30">30</option>
+                                                                            </select>
+                                                                          </div>
+                                                                    </div>
+                                                                </div>
+                                                                  
+                                                                </div>
+
+
+
+
+
+                                                            </div>
+                                                            <div class="flex items-start">
+                                                                <div class="flex items-center h-5">
+                                                                    <input id="buffer" name="buffer" type="checkbox"
+                                                                        class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                                                </div>
+                                                                <div class="ml-3 text-sm">
+                                                                    <label for="buffer"
+                                                                        class="font-medium text-gray-700">Buffer
+                                                                        currency</label>
+                                                                    <p class="text-gray-500">Adds a buffer to each
+                                                                        conversion. </p>
+
+                                                                    <div class="mt-1 flex rounded-md shadow-sm h-10 ">
+                                                                        <span
+                                                                            class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                                                            +
+                                                                        </span>
+
+                                                                        <input type="text"
+                                                                            style="border:1px solid lightgray"
+                                                                            name="buffer_value" id="buffer_value"
+                                                                            class="rounded-r-md  flex-1 block w-3/4  px-2 sm:text-sm border-gray-300 border-gray-300 bg-gray-50 focus-none"
+                                                                            placeholder="0.00">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                    <div class="px-4 py-3 bg-gray-50 text-right sm:px-6 mt-3">
+                                        <button data-function="currency" type="submit"
+                                            class="settingsButton inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                            Save
+                                        </button>
+                                    </div>
+
+                                </div>
+
+
+                                <div style="height:456px"
+                                    class=" overflow-scroll w-11/12 mb-0 my-6 md:w-6/12 shadow sm:px-10 sm:py-6 py-4 px-4 bg-white dark:bg-gray-800 rounded-md">
+                                    <p class="text-lg text-gray-800 dark:text-gray-100 font-semibold pb-3">Recent
+                                        conversions</p>
+
+                                    <!-- component -->
+                                    <div class="relative  m-8">
+                                        <div class="border-r-2 border-gray-200 border-dotted absolute h-full top-0 z-0"
+                                            style="left: 7px"></div>
+                                        <ul class="list-none m-0 p-0">
+                                            <li class="mb-2">
+                                                <div class="flex items-center mb-1">
+                                                    <div
+                                                        class="bg-indigo-600 rounded-full h-4 w-4 border-gray-200 border-2 z-10">
+                                                    </div>
+                                                    <div class="flex-1 ml-4 font-medium">Oct 2020 - Learn Electron JS
+                                                    </div>
+                                                </div>
+                                                <div class="ml-12">
+                                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                                    Dignissimos tenetur, suscipit atque et
+                                                    nulla dolores unde maiores doloribus nemo possimus commodi totam
+                                                    consectetur temporibus odit
+                                                    velit illo repellendus provident vitae.
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../views/partials/footer') %>

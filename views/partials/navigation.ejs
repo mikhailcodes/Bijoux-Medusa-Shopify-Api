@@ -1,0 +1,27 @@
+<div class="w-full h-auto lg:h-20 mb-6 rounded shadow bg-white -mt-8">
+    <div class="lg:hidden bg-white w-full relative">
+        <div class="absolute inset-0 m-auto mr-4 z-0 w-6 h-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-selector"
+                width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#A0AEC0"
+                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" />
+                <polyline points="8 9 12 5 16 9" />
+                <polyline points="16 15 12 19 8 15" />
+            </svg>
+        </div>
+        <select aria-label="Selected tab"
+            class="form-select block w-full p-3 border border-gray-300 rounded text-gray-600 appearance-none bg-transparent relative z-10">
+            <option class="text-sm text-gray-600">Curreny Converter</option>
+            <option selected="" class="text-sm text-gray-600">SKU Generator</option>
+            <option class="text-sm text-gray-600">Settings</option>
+        </select>
+    </div>
+    <ul class="hidden lg:flex flex-row items-center h-full">
+
+        <li class="pl-10 my-0 text-base text-gray-600"><a href="/admin/dashboard">Currency
+                Converter</a></li>
+        <li class="pl-10 my-0 text-base text-gray-600"><a href="/admin/sku">SKU Generator</a></li>
+        <li class="pl-10 my-0 text-base text-gray-600"><a href="/admin/settings">Settings</a> </li>
+
+    </ul>
+</div>

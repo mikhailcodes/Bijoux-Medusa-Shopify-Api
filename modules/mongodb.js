@@ -1,3 +1,6 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: '../.env' })
+}
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 const url = 'mongodb+srv://admin_app:' + process.env.mongodb + '@cluster0.k4n0z.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';

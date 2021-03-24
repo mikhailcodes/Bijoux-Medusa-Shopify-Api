@@ -17,15 +17,8 @@ const connect = require('./mongodb');
 
 const shopify = new Shopify({
     shopName: process.env.shopName,
-    apiKey: process.env.privateKey,
-    password: process.env.privatePassword,
-    autoLimit: true
-});
-
-const shopify_two = new Shopify({
-    shopName: process.env.shopName_two,
-    apiKey: process.env.privateKey_two,
-    password: process.env.privatePassword_two,
+    apiKey: process.env.shopKey,
+    password: process.env.shopPassword,
     autoLimit: true
 });
 

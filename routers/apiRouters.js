@@ -95,6 +95,11 @@ apiRoutes.route('/convert').post(function (req, res) {
   if (found) {
     // Ignore since this webhook is triggered twice
     console.log('Already on scratch disk: ' + request.id)
+    setTimeout(function () {
+      db.get('posts').remove({ id: request.id, title: request.title }).write()
+      db.update('count', n => n - 1).write();
+      console.log('Removed ' + request.id)
+    }, 3000);
 
   } else {
     console.log('Not found on scratch disk, proceed.')

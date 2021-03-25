@@ -15,7 +15,6 @@ const shopify = new Shopify({
 const StormDB = require("stormdb");
 const engine = new StormDB.localFileEngine("./db.stormdb");
 const db = new StormDB(engine);
-db.default({ products: [] });
 
 const shopify2 = new Shopify({
   shopName: process.env.shopName2,
@@ -82,14 +81,14 @@ apiRoutes.route('/convert').post(function (req, res) {
   // Unfortunately our update ALSO triggers a webhook after we update. So we will maintain a 'scratch disk' for 20seconds in this DB
   // If we find another way, we'll update it.
 
+
+  db.default({ products: [] });
+  
   var request = req.body;
   res.send('Recieved!')
   
   var findOne = (name) => {
-    return db
-      .get("products")
-      .value()
-      .find((x) => x.id === name);
+    return db.get("products").value().find((x) => x.id === name);
   };
 
   var found = findOne(request.id);

@@ -12,9 +12,12 @@ const shopify = new Shopify({
   apiKey: process.env.shopKey,
   password: process.env.shopPassword
 });
-const StormDB = require("stormdb");
-const engine = new StormDB.localFileEngine("./db.stormdb");
-const db = new StormDB(engine);
+
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+
+const adapter = new FileSync('db.json')
+const db = low(adapter)
 
 const shopify2 = new Shopify({
   shopName: process.env.shopName2,
@@ -82,21 +85,17 @@ apiRoutes.route('/convert').post(function (req, res) {
   // If we find another way, we'll update it.
 
 
-  db.default({ products: [] });
-  
+  db.defaults({ products: [], user: {}, count: 0 }).write()
+
   var request = req.body;
   res.send('Recieved!')
-  
-  var findOne = (name) => {
-    return db.get("products").value().find((x) => x.id === name);
-  };
 
-  var found = findOne(request.id);
+  var found = db.get('products').find({ id: request.id }).value();
 
   if (found) {
     // Ignore since this webhook is triggered twice
     console.log('Already on scratch disk: ' + request.id)
- 
+
   } else {
     console.log('Not found on scratch disk, proceed.')
     // Update the prices as needed, with the timer to remove the ID 
@@ -133,24 +132,19 @@ apiRoutes.route('/convert').post(function (req, res) {
       });
     })
 
-    db.get("products").push({ id: request.id }).save()
+    db.get('products').push({ id: request.id, title: request.title }).write()
+    db.update('count', n => n + 1).write();
     console.log('Saved product: ' + request.id)
-  
-    setTimeout(function () {   // after 20sec we need to run a chron that removes that product id
-      var findOne = (name) => {
-        return db.get("products").value().find(function (x, index) {
-          if (x.id === name) {
-          console.log(index)
-            db.get("products").get(index).delete()
-            db.save()
-            console.log('Removed product: ' + request.id)
-          }
-        });
-      };
-      
-      findOne(request.id)
-    }, 20000);
+
+
+    setTimeout(function () {
+      db.get('posts').remove({ id: request.id, title: request.title }).write()
+      db.update('count', n => n - 1).write();
+      console.log('Removed ' + request.id)
+    }, 3000);
   }
+
+
 });
 
 apiRoutes.route('/inventory').post(function (req, res) {

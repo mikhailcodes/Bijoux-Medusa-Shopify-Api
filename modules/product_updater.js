@@ -124,13 +124,7 @@ function updateProduct(request) {
         }).catch((err) => {
 
         })
-
-
     })
-
-    // Search for the parallel product on second store
-
-    // Update parallel product
 }
 
 

@@ -3,7 +3,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
-const url = 'mongodb+srv://admin_app:' + process.env.mongodb + '@cluster0.k4n0z.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+const url = 'mongodb+srv://admin_app:' + process.env.mongodb + '@cluster0.k4n0z.mongodb.net';
 
 var _db;
 
@@ -12,7 +12,8 @@ module.exports = {
   connectToServer: function( callback ) {
     MongoClient.connect( url,  { useNewUrlParser: true }, function( err, client ) {
       _db  = client.db('bijoux-medusa-db');
-    } );
+      return _db
+    });
   },
 
   getDb: function() {

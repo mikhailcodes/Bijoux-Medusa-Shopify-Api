@@ -30,7 +30,7 @@ app.use(function (req, res, next) {
 });
 
 
-//connect.connectToServer() // Connect our DB
+
 app.use('/', routes); //  Connect all our routes to our application
 app.listen(PORT, () => console.log(`Listening on ${PORT}`)) // Turn on that server!
 

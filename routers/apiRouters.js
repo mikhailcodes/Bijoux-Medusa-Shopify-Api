@@ -7,12 +7,24 @@ const limiter = new RateLimiter(5, 250); // 5 request every 250ms ~ 20 per secon
 const connect = require('../modules/mongodb')
 const ObjectId = require('mongodb').ObjectID;
 const Shopify = require('shopify-api-node');
-const shopify = new Shopify({ 
+const shopify = new Shopify({
   shopName: process.env.shopName,
   apiKey: process.env.shopKey,
   password: process.env.shopPassword
 });
+const StormDB = require("stormdb");
+const engine = new StormDB.localFileEngine("./db.stormdb");
+const db = new StormDB(engine);
+db.default({ products: [] });
+
+const shopify2 = new Shopify({
+  shopName: process.env.shopName2,
+  apiKey: process.env.shopKey2,
+  password: process.env.shopPassword2
+});
 const product_updater = require('../modules/product_updater')
+const { convert } = require('exchange-rates-api');
+const { exchangeRates } = require('exchange-rates-api');
 
 //Configure the settings of the apiRoutes
 shopify.on('callLimits', (limits) => console.log(limits));
@@ -31,11 +43,11 @@ apiRoutes.post('/settings', function (req, res) {
   var request = req.body; // this will explain the setting type that we need to update
   var settings = request.settings, type = request.settings_type;
   var dataset = {}
-  dataset[type] =  settings
-  
+  dataset[type] = settings
+
   connect.getDb().collection(database).find().toArray(function (err, docs) {
     var id = docs[0]._id;
-    connect.getDb().collection(database).updateOne( { "_id": ObjectId(id) }, { $set: dataset}, function (err, result) {
+    connect.getDb().collection(database).updateOne({ "_id": ObjectId(id) }, { $set: dataset }, function (err, result) {
       console.log('done')
     });
     res.send('Updated!')
@@ -46,11 +58,11 @@ apiRoutes.post('/settings', function (req, res) {
 apiRoutes.post('/generate_sku', function (req, res) {
   var request = req.body;
   connect.getDb().collection('Settings').find().toArray(function (err, settings) {
-   var sku_setting = settings[0].sku_generator[0].automatic
-   
-   if (sku_setting){
-    product_updater.generateSingleSku(request)
-   }
+    var sku_setting = settings[0].sku_generator[0].automatic
+
+    if (sku_setting) {
+      product_updater.generateSingleSku(request)
+    }
   })
   res.send('Recieved')
 })
@@ -63,56 +75,126 @@ apiRoutes.post('/update_all_sku', function (req, res) {
 
 
 apiRoutes.route('/convert').post(function (req, res) {
+  // Client is using Syncio Shopify App for their constant sync of their products. 
+  // Syncio sends the price without converting. Eg: if CAD Price is $19.99, it gets sent to USD site as $19.99
+  // Syncio triggers a product update webhook which we send to our server.
+  // We then update the product price by converting it here.
+  // Unfortunately our update ALSO triggers a webhook after we update. So we will maintain a 'scratch disk' for 20seconds in this DB
+  // If we find another way, we'll update it.
+
   var request = req.body;
-  product_updater.syncProducts()
-  //product_updater.updateProduct(request)
   res.send('Recieved!')
-  /*
-  const CADtoUSD = async () => {
-    let amount = await convert(request.amount, request.source, request.convert);
-
-    var response = {}
-    response.from = request.source
-    response.to = request.convert
-    response.original = request.amount
-    response.final = parseFloat(amount.toFixed(2))
-
-    res.send(response)
+  
+  var findOne = (name) => {
+    return db
+      .get("products")
+      .value()
+      .find((x) => x.id === name);
   };
-  CADtoUSD();
-  */
+
+  var found = findOne(request.id);
+
+  if (found) {
+    // Ignore since this webhook is triggered twice
+    console.log('Already on scratch disk: ' + request.id)
+ 
+  } else {
+    console.log('Not found on scratch disk, proceed.')
+    // Update the prices as needed, with the timer to remove the ID 
+    request.variants.forEach(function (variant) {
+      var variant_id = variant.id,
+        mainCompare = parseFloat(variant.compare_at_price),
+        mainPrice = parseFloat(variant.price);
+
+      var CADtoUSD = async () => {
+        var amount = await convert(mainPrice, 'CAD', 'USD'); // CAD to USD
+        var compareAmnt = await convert(mainCompare, 'CAD', 'USD'); // CAD to USD
+        var results = {
+          "amount": amount,
+          "id": variant_id,
+          "compare": compareAmnt
+        }
+        return results
+      };
+
+      CADtoUSD().then(function (results) {
+        var params = {}
+        if (results.amount > 0) { params.price = results.amount.toFixed(2) }
+        if (results.compare > 0) { params.compare_at_price = results.compare.toFixed(2) }
+        var message = 'For ' + request.title + ' variant: ' + variant_id + ', converted ' + mainPrice + ' / ' + mainCompare + ' to ' + params.price + ' / ' + params.compare_at_price;
+        console.log(message) // Message will show NaN/Undefined if the value is zero. This is intended.
+
+        limiter.removeTokens(1, function () {
+          shopify2.productVariant.update(results.id, params).then(function (variant) {
+            var title = variant.title,
+              variant_id = variant.id;
+            console.log('Updated ' + title + ' ID: ' + variant_id)
+          }).catch((err) => console.log(err));
+        })
+      });
+    })
+
+    db.get("products").push({ id: request.id }).save()
+    console.log('Saved product: ' + request.id)
+  
+    setTimeout(function () {   // after 20sec we need to run a chron that removes that product id
+      var findOne = (name) => {
+        return db.get("products").value().find(function (x, index) {
+          if (x.id === name) {
+          console.log(index)
+            db.get("products").get(index).delete()
+            db.save()
+            console.log('Removed product: ' + request.id)
+          }
+        });
+      };
+      
+      findOne(request.id)
+    }, 20000);
+  }
 });
 
 apiRoutes.route('/inventory').post(function (req, res) {
-    var inventoryID = req.body.inventoryID;
+  var inventoryID = req.body.inventoryID;
 
-    limiter.removeTokens(1, function () {
-      var id = inventoryID;
-      var params = { inventory_item_ids: inventoryID } // item inventory id
-      shopify.inventoryLevel.list(params).then(function (inventoryLevel) {
-        res.send(inventoryLevel)
-      })
-        .catch((err) => res.status(err.response.statusCode).json(err));
+  limiter.removeTokens(1, function () {
+    var id = inventoryID;
+    var params = { inventory_item_ids: inventoryID } // item inventory id
+    shopify.inventoryLevel.list(params).then(function (inventoryLevel) {
+      res.send(inventoryLevel)
     })
-  });
+      .catch((err) => res.status(err.response.statusCode).json(err));
+  })
+});
 
 apiRoutes.route('/location').post(function (req, res) {
-    limiter.removeTokens(1, function () {
-      shopify.location
-        .list()
-        .then((result) => res.json(result))
-        .catch((err) => res.status(400).json(err));
-    });
+  limiter.removeTokens(1, function () {
+    shopify.location
+      .list()
+      .then((result) => res.json(result))
+      .catch((err) => res.status(400).json(err));
   });
+});
 
 apiRoutes.route('/product').post(function (req, res) {
-    var productId = req.body.product;
-    limiter.removeTokens(1, function () {
-      shopify.product
-        .get(productId)
-        .then((result) => res.json(result))
-        .catch((err) => res.status(400).json(err));
-    });
+  var productId = req.body.product;
+  limiter.removeTokens(1, function () {
+    shopify.product
+      .get(productId)
+      .then((result) => res.json(result))
+      .catch((err) => res.status(400).json(err));
   });
+});
+
+apiRoutes.route('/test').post(function (req, res) {
+  var productId = req.body.product;
+
+  limiter.removeTokens(1, function () {
+    shopify.inventoryItem
+      .get(41367669047385)
+      .then((result) => res.json(result))
+      .catch((err) => res.status(400).json(err));
+  });
+});
 
 module.exports = apiRoutes;

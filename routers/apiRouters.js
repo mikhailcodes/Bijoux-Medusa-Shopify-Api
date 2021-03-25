@@ -99,7 +99,7 @@ apiRoutes.route('/convert').post(function (req, res) {
       db.get('posts').remove({ id: request.id, title: request.title }).write()
       db.update('count', n => n - 1).write();
       console.log('Removed ' + request.id)
-    }, 3000);
+    }, 10000);
 
   } else {
     console.log('Not found on scratch disk, proceed.')
@@ -146,7 +146,7 @@ apiRoutes.route('/convert').post(function (req, res) {
       db.get('posts').remove({ id: request.id, title: request.title }).write()
       db.update('count', n => n - 1).write();
       console.log('Removed ' + request.id)
-    }, 3000);
+    }, 10000);
   }
 
 

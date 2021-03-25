@@ -59,13 +59,7 @@ apiRoutes.post('/settings', function (req, res) {
 // Generate single SKUs, uses product UPDATE and product CREATE webhooks.
 apiRoutes.post('/generate_sku', function (req, res) {
   var request = req.body;
-  connect.getDb().collection('Settings').find().toArray(function (err, settings) {
-    var sku_setting = settings[0].sku_generator[0].automatic
-
-    if (sku_setting) {
-      product_updater.generateSingleSku(request)
-    }
-  })
+  product_updater.generateSingleSku(request)
   res.send('Recieved')
 })
 

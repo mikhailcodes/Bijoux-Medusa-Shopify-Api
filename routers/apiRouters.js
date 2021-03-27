@@ -97,7 +97,7 @@ apiRoutes.route('/convert').post(function (req, res) {
   } else {
     console.log('Not found on scratch disk, proceed.')
     // Update the prices as needed, with the timer to remove the ID 
-    /*
+  
     request.variants.forEach(function (variant) {
       var variant_id = variant.id,
         mainCompare = parseFloat(variant.compare_at_price),
@@ -130,8 +130,6 @@ apiRoutes.route('/convert').post(function (req, res) {
         })
       });
     })
-
-*/
     db.get('products').push({ id: request.id, title: request.title }).write()
     db.update('count', n => n + 1).write();
     console.log('Saved product: ' + request.id)

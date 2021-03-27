@@ -87,13 +87,12 @@ apiRoutes.route('/convert').post(function (req, res) {
   var found = db.get('products').find({ id: request.id }).value();
 
   if (found) {
-    // Ignore since this webhook is triggered twice
+    // Function will always trigger a second webhook, so on the second we remove it.
     console.log('Already on scratch disk: ' + request.id)
-    setTimeout(function () {
+   
       db.get('posts').remove({ id: request.id, title: request.title }).write()
       db.update('count', n => n - 1).write();
       console.log('Removed ' + request.id)
-    }, 10000);
 
   } else {
     console.log('Not found on scratch disk, proceed.')
@@ -135,12 +134,13 @@ apiRoutes.route('/convert').post(function (req, res) {
     db.update('count', n => n + 1).write();
     console.log('Saved product: ' + request.id)
 
-
+/*
     setTimeout(function () {
       db.get('posts').remove({ id: request.id, title: request.title }).write()
       db.update('count', n => n - 1).write();
       console.log('Removed ' + request.id)
-    }, 10000);
+    }, 8000);
+    */
   }
 
 

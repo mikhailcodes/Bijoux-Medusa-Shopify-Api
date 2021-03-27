@@ -52,15 +52,9 @@ function generateAllSku() {
                         var dateTime = date + 'T' + time;
 
                         shopify.productVariant.update(id, variantParams).then(function (variant) {
-                            var entry = { "variant_id": variant.id, "timestamp": dateTime, "status": true, "product_title": request.title, "variant_title": variant.title }
-                            connect.getDb().collection('sku-logs').insertOne(entry, function (error, response) {
-                                console.log('Successfully updated SKU for ' + request.title + ' ' + variant.title)
-                            })
+                            console.log('Successfully updated SKU for ' + product.title + ' ' + variant.title)
                         }).catch((err) => {
-                            var entry = { "variant_id": variant.id, "timestamp": dateTime, "status": false, "product_title": request.title, "variant_title": variant.title };
-                            connect.getDb().collection('sku-logs').insertOne(entry, function (error, response) {
-                                console.log('FAILED to updated SKU for ' + request.title + ' ' + variant.title)
-                            })
+                            console.log('FAILED to updated SKU for ' + product.title + ' ' + variant.title)
                         });
                     });
                 })

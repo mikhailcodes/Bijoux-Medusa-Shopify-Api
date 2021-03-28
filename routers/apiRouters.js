@@ -22,7 +22,8 @@ const db = low(adapter)
 const shopify2 = new Shopify({
   shopName: process.env.shopName2,
   apiKey: process.env.shopKey2,
-  password: process.env.shopPassword2
+  password: process.env.shopPassword2,
+  autoLimit: true
 });
 const product_updater = require('../modules/product_updater')
 const { convert } = require('exchange-rates-api');
@@ -71,6 +72,11 @@ apiRoutes.post('/update_all_sku', function (req, res) {
 
 apiRoutes.post('/convert_all_usd', function (req, res) {
   product_updater.convertAll()
+  res.send('Recieved')
+})
+
+apiRoutes.post('/convert_all_usdUpdate', function (req, res) {
+  product_updater.convertPriceUpdate()
   res.send('Recieved')
 })
 

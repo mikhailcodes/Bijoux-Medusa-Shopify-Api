@@ -28,7 +28,8 @@ const db = low(adapter)
 const shopify2 = new Shopify({
   shopName: process.env.shopName2,
   apiKey: process.env.shopKey2,
-  password: process.env.shopPassword2
+  password: process.env.shopPassword2,
+  autoLimit: true
 });
 
 function parseProductHandle(handle) {
@@ -257,14 +258,13 @@ function convertAll() {
                             if (results.compare > 0) { params.compare_at_price = results.compare.toFixed(2) }
                             var message = 'For variant: ' + variant_id + ', converted ' + mainPrice + ' / ' + mainCompare + ' to ' + params.price + ' / ' + params.compare_at_price;
                             console.log(message) // Message will show NaN/Undefined if the value is zero. This is intended.
-
-                   
+                            limiter.removeTokens(1, function () {
                                 shopify2.productVariant.update(results.id, params).then(function (variant) {
                                     var title = variant.title,
                                         variant_id = variant.id;
                                     console.log('Updated ' + title + ' ID: ' + variant_id)
                                 }).catch((err) => console.log(err));
-                        
+                            })
                         });
                     });
                 })
@@ -278,9 +278,72 @@ function convertAll() {
 
 }
 
+function convertAllUpdate() {
+    (async () => {
+        let params = { limit: 10, fields: 'handle,id,variants,updated_at' }; // Set needed fields 
+        do {
+            const products = await shopify2.product.list(params);
+            products.forEach(function (product) { // sort through each product 
+            var dateSet = '2021-03-28';
+            var currUpdate = product.updated_at.substr(0, 10); // minus date
+            
+            if (currUpdate < dateSet) {
+            console.log(product.updated_at)
+                limiter.removeTokens(1, function () {
+                    var handle = product.handle,  // grab handle
+                        variants = product.variants; // grab variants
+
+            console.log('Converting...'+product.id)
+                    variants.forEach(function (variant) {
+                        var variant_id = variant.id,
+                            mainCompare = parseFloat(variant.compare_at_price),
+                            mainPrice = parseFloat(variant.price);
+
+                        var CADtoUSD = async () => {
+                            var amount = await convert(mainPrice, 'CAD', 'USD'); // CAD to USD
+                            var compareAmnt = await convert(mainCompare, 'CAD', 'USD'); // CAD to USD
+                            var results = {
+                                "amount": amount,
+                                "id": variant_id,
+                                "compare": compareAmnt
+                            }
+                            return results
+                        };
+
+                        CADtoUSD().then(function (results) {
+                            var params = {}
+                            if (results.amount > 0) { params.price = results.amount.toFixed(2) }
+                            if (results.compare > 0) { params.compare_at_price = results.compare.toFixed(2) }
+                            var message = 'For variant: ' + variant_id + ', converted CAD' + mainPrice + ' / ' + mainCompare + ' to USD' + params.price + ' / ' + params.compare_at_price;
+                            console.log(message) // Message will show NaN/Undefined if the value is zero. This is intended.
+                            limiter.removeTokens(1, function () {
+                                shopify2.productVariant.update(results.id, params).then(function (variant) {
+                                    var title = variant.title,
+                                        variant_id = variant.id;
+                                    console.log('Updated ' + title + ' ID: ' + variant_id)
+                                }).catch((err) => console.log(err));
+                            })
+                        });
+                    });
+                })
+            }
+            });
+
+            params = products.nextPageParameters;
+        } while (params !== undefined);
+    })().catch(console.error)
+    .then(function() {
+    console.log('Finished entire product list')
+    });
+
+    shopify.on('callLimits', (limits) => console.log(limits));
+
+}
+
 module.exports.syncProducts = syncProducts;
 module.exports.updateProduct = updateProduct;
 module.exports.generateSingleSku = generateSingleSku;
 module.exports.generateAllSku = generateAllSku;
 module.exports.convertAll = convertAll;
 module.exports.convertPrice = convertPrice;
+module.exports.convertPriceUpdate = convertAllUpdate;

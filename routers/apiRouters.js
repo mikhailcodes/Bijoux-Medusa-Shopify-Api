@@ -69,81 +69,16 @@ apiRoutes.post('/update_all_sku', function (req, res) {
   res.send('Recieved')
 })
 
+apiRoutes.post('/convert_all_usd', function (req, res) {
+  product_updater.convertAll()
+  res.send('Recieved')
+})
+
 
 apiRoutes.route('/convert').post(function (req, res) {
-  // Client is using Syncio Shopify App for their constant sync of their products. 
-  // Syncio sends the price without converting. Eg: if CAD Price is $19.99, it gets sent to USD site as $19.99
-  // Syncio triggers a product update webhook which we send to our server.
-  // We then update the product price by converting it here.
-  // Unfortunately our update ALSO triggers a webhook after we update. So we will maintain a 'scratch disk' for 20seconds in this DB
-  // If we find another way, we'll update it.
-
-
-  db.defaults({ products: [], user: {}, count: 0 }).write()
-
   var request = req.body;
+  product_updater.convertPrice(request)
   res.send('Recieved!')
-
-  var found = db.get('products').find({ id: request.id }).value();
-
-  if (found) {
-    // Function will always trigger a second webhook, so on the second we remove it.
-    console.log('Already on scratch disk: ' + request.id)
-   
-      db.get('products').remove({ id: request.id }).write()
-      db.update('count', n => n - 1).write();
-      console.log('Removed ' + request.id)
-
-  } else {
-    console.log('Not found on scratch disk, proceed.')
-    // Update the prices as needed, with the timer to remove the ID 
-  
-    request.variants.forEach(function (variant) {
-      var variant_id = variant.id,
-        mainCompare = parseFloat(variant.compare_at_price),
-        mainPrice = parseFloat(variant.price);
-
-      var CADtoUSD = async () => {
-        var amount = await convert(mainPrice, 'CAD', 'USD'); // CAD to USD
-        var compareAmnt = await convert(mainCompare, 'CAD', 'USD'); // CAD to USD
-        var results = {
-          "amount": amount,
-          "id": variant_id,
-          "compare": compareAmnt
-        }
-        return results
-      };
-
-      CADtoUSD().then(function (results) {
-        var params = {}
-        if (results.amount > 0) { params.price = results.amount.toFixed(2) }
-        if (results.compare > 0) { params.compare_at_price = results.compare.toFixed(2) }
-        var message = 'For ' + request.title + ' variant: ' + variant_id + ', converted ' + mainPrice + ' / ' + mainCompare + ' to ' + params.price + ' / ' + params.compare_at_price;
-        console.log(message) // Message will show NaN/Undefined if the value is zero. This is intended.
-
-        limiter.removeTokens(1, function () {
-          shopify2.productVariant.update(results.id, params).then(function (variant) {
-            var title = variant.title,
-              variant_id = variant.id;
-            console.log('Updated ' + title + ' ID: ' + variant_id)
-          }).catch((err) => console.log(err));
-        })
-      });
-    })
-    
-    db.get('products').push({ id: request.id, title: request.title }).write()
-    db.update('count', n => n + 1).write();
-    console.log('Saved product: ' + request.id)
-
-/*
-    setTimeout(function () {
-      db.get('posts').remove({ id: request.id, title: request.title }).write()
-      db.update('count', n => n - 1).write();
-      console.log('Removed ' + request.id)
-    }, 8000);
-    */
-  }
-
 
 });
 

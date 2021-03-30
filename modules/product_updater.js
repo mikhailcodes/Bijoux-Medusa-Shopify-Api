@@ -253,15 +253,16 @@ function convertPrice(request) {
                 var params = {}
                 if (results.amount > 0) {
                     var vPrice = roundRule(results.amount);
-                    params.price = vPrice;
+                    params.price = parseFloat(vPrice);
                 }
 
                 if (results.compare > 0) {
                     var cPrice = roundRule(results.compare_at_price);
-                    params.compare_at_price = cPrice;
+                    params.compare_at_price = parseFloat(cPrice);
                 }
           
                 limiter.removeTokens(1, function () {
+                console.log(params)
                     shopify2.productVariant.update(results.id, params).then(function (variant) {
                         var title = variant.title,
                             variant_id = variant.id;

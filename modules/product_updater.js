@@ -217,10 +217,17 @@ function convertPrice(request) {
     var found = db.get('products').find({ id: request.id }).value();
 
     if (found) {
-        console.log('Already on scratch disk: ' + request.id) // Function will always trigger a second webhook, so on the second we remove it.
+        console.log('Already on scratch disk: ' + request.id) // Function will always trigger a second webhook. 
+        
+        var MINS = (60 * 1) * 1000; // 3 mins later remove so we don't trigger more webhooks.
+        
+        setTimeout(function(){ 
         db.get('products').remove({ id: request.id }).write()
         db.update('count', n => n - 1).write();
         console.log('Removed ' + request.id)
+        
+        }, MINS);
+        
     } else {
         console.log('Not found on scratch disk, proceed.') // Update the prices as needed, with the timer to remove the ID 
         request.variants.forEach(function (variant) {
@@ -229,8 +236,8 @@ function convertPrice(request) {
                 mainPrice = parseFloat(variant.price);
 
             var CADtoUSD = async () => {
-                var amount = await convertValues(mainPrice, 'CAD', 'USD'); // CAD to USD
-                var compareAmnt = await convertValues(mainCompare, 'CAD', 'USD'); // CAD to USD
+                var amount =  convertValues(mainPrice, 'CAD', 'USD'); // CAD to USD
+                var compareAmnt = convertValues(mainCompare, 'CAD', 'USD'); // CAD to USD
                 var results = {
                     "amount": amount,
                     "id": variant_id,
@@ -259,7 +266,7 @@ function convertPrice(request) {
                         var title = variant.title,
                             variant_id = variant.id;
                         console.log('Updated ' + title + ' ID: ' + variant_id)
-                    }).catch((err) => console.log(err));
+                    }).catch((err) => console.log('Product failed! '+request.id +' / Variant: '+variant_id));
                 })
 
                 db.get('products').push({ id: request.id, title: request.title }).write()
@@ -331,7 +338,6 @@ function convertAllUpdate() {
 
            //     if (currUpdate < dateSet) {
              //       console.log(product.updated_at)
-             console.log(product.id)
                     limiter.removeTokens(1, function () {
                         var handle = product.handle,  // grab handle
                             variants = product.variants; // grab variants
@@ -349,7 +355,7 @@ function convertAllUpdate() {
                         }
                         
                         var params = {};
-                        params.tags = tags;
+                        params.tags = prod;
                         shopify.product.update(id,params);
                         /*
                         variants.forEach(function (variant) {

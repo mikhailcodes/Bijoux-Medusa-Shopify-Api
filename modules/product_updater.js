@@ -80,10 +80,10 @@ function generateAllSku() {
                         variants = product.variants, // grab variants
                         handleParse = parseProductHandle(handle); // generate SKU based on handle
                     variants.forEach(function (variant) { // sort through each variant of the product
-                    var idString = variant.id ;
-                    var getLastDigit = num => +(num + '').slice(-4);
-                    var modifier = getLastDigit(idString)
-                    
+                        var idString = variant.id;
+                        var getLastDigit = num => +(num + '').slice(-4);
+                        var modifier = getLastDigit(idString)
+
                         var id = variant.id,
                             position = variant.position, // variant position for unique SKUs
                             generatedSku = handleParse + position + modifier;
@@ -116,10 +116,10 @@ function generateSingleSku(request) {
         handleParse = parseProductHandle(handle);
 
     variants.forEach(function (variant) { // sort through each variant of the product
-        var idString = variant.id ;
+        var idString = variant.id;
         var getLastDigit = num => +(num + '').slice(-4);
         var modifier = getLastDigit(idString)
-        
+
         var id = variant.id,
             position = variant.position, // variant position for unique SKUs
             generatedSku = handleParse + position + modifier;
@@ -218,16 +218,16 @@ function convertPrice(request) {
 
     if (found) {
         console.log('Already on scratch disk: ' + request.id) // Function will always trigger a second webhook. 
-        
+
         var MINS = (60 * 1) * 1000; // 3 mins later remove so we don't trigger more webhooks.
-        
-        setTimeout(function(){ 
-        db.get('products').remove({ id: request.id }).write()
-        db.update('count', n => n - 1).write();
-        console.log('Removed ' + request.id)
-        
+
+        setTimeout(function () {
+            db.get('products').remove({ id: request.id }).write()
+            db.update('count', n => n - 1).write();
+            console.log('Removed ' + request.id)
+
         }, MINS);
-        
+
     } else {
         console.log('Not found on scratch disk, proceed.') // Update the prices as needed, with the timer to remove the ID 
         request.variants.forEach(function (variant) {
@@ -236,12 +236,15 @@ function convertPrice(request) {
                 mainPrice = parseFloat(variant.price);
 
             var CADtoUSD = async () => {
-                var amount =  convertValues(mainPrice, 'CAD', 'USD'); // CAD to USD
+                var amount = convertValues(mainPrice, 'CAD', 'USD'); // CAD to USD
                 var compareAmnt = convertValues(mainCompare, 'CAD', 'USD'); // CAD to USD
+                var database = rates.get('rates[0]').value();
+                var rate = database.rate;
                 var results = {
                     "amount": amount,
                     "id": variant_id,
-                    "compare": compareAmnt
+                    "compare": compareAmnt,
+                    "rate": rate
                 }
                 return results
             };
@@ -257,16 +260,20 @@ function convertPrice(request) {
                     var cPrice = roundRule(results.compare_at_price);
                     params.compare_at_price = cPrice;
                 }
-
-                var message = 'For variant: ' + variant_id + ', converted ' + mainPrice + ' / ' + mainCompare + ' to ' + params.price + ' / ' + params.compare_at_price;
-                console.log(message) // Message will show NaN/Undefined if the value is zero. This is intended.
-
+          
                 limiter.removeTokens(1, function () {
                     shopify2.productVariant.update(results.id, params).then(function (variant) {
                         var title = variant.title,
                             variant_id = variant.id;
-                        console.log('Updated ' + title + ' ID: ' + variant_id)
-                    }).catch((err) => console.log('Product failed! '+request.id +' / Variant: '+variant_id));
+                            
+                            if (mainCompare > 0){
+                                var message = 'Converting ID: '+request.id+ ' for Variant ID: ' + variant_id + ', converted ' + mainPrice + ' to ' + params.price;
+                                console.log(message) 
+                            } else {
+                                var message = 'Converting ID: '+request.id+ ' for Variant ID: ' + variant_id + ', converted ' + mainPrice + ' to ' + params.price  + ' AND ' + mainCompare + ' to ' + params.compare_at_price;
+                                console.log(message) 
+                            }
+                    }).catch((err) => console.log('Product failed! ' + request.id + ' / Variant: ' + variant_id));
                 })
 
                 db.get('products').push({ id: request.id, title: request.title }).write()
@@ -336,63 +343,63 @@ function convertAllUpdate() {
                 var dateSet = '2021-03-28';
                 var currUpdate = product.updated_at.substr(0, 10); // minus date
 
-           //     if (currUpdate < dateSet) {
-             //       console.log(product.updated_at)
-                    limiter.removeTokens(1, function () {
-                        var handle = product.handle,  // grab handle
-                            variants = product.variants; // grab variants
+                //     if (currUpdate < dateSet) {
+                //       console.log(product.updated_at)
+                limiter.removeTokens(1, function () {
+                    var handle = product.handle,  // grab handle
+                        variants = product.variants; // grab variants
 
-                        console.log('Updating... ' + product.id)
-                        var id = product.id;
-                        
-                        var prod = product.tags
+                    console.log('Updating... ' + product.id)
+                    var id = product.id;
 
-                        if (prod.indexOf('priceUpdate') > -1) {
-                            // remove price update
-                            var prod = prod.replace(', priceUpdate','')
-                        } else {
-                         var prod = prod + ', priceUpdate'
-                        }
-                        
-                        var params = {};
-                        params.tags = prod;
-                        shopify.product.update(id,params);
-                        /*
-                        variants.forEach(function (variant) {
-                            var variant_id = variant.id,
-                                tags = parseFloat(variant.compare_at_price),
-                                mainPrice = parseFloat(variant.price);
+                    var prod = product.tags
 
-                            var CADtoUSD = async () => {
-                                var amount = mainPrice 
-                                var compareAmnt = mainCompare
-                                var results = {
-                                    "amount": amount,
-                                    "id": variant_id,
-                                    "compare": compareAmnt
-                                }
-                                return results
-                            };
+                    if (prod.indexOf('priceUpdate') > -1) {
+                        // remove price update
+                        var prod = prod.replace(', priceUpdate', '')
+                    } else {
+                        var prod = prod + ', priceUpdate'
+                    }
 
-                            CADtoUSD().then(function (results) {
-                                var params = {}
-                                if (results.amount > 0) { params.price = results.amount.toFixed(2) }
-                                if (results.compare > 0) { params.compare_at_price = results.compare.toFixed(2) }
-                               var message = 'For variant: ' + variant_id + ', converted CAD' + mainPrice + ' / ' + mainCompare + ' to USD' + params.price + ' / ' + params.compare_at_price;
-                                console.log(message) // Message will show NaN/Undefined if the value is zero. This is intended.
-                                limiter.removeTokens(1, function () {
-                                    shopify.productVariant.update(results.id, params).then(function (variant) {
-                                        var title = variant.title,
-                                            variant_id = variant.id;
-                                        console.log('Updated ' + title + ' ID: ' + variant_id)
-                                    }).catch((err) => console.log(err));
-                                })
-                            });
+                    var params = {};
+                    params.tags = prod;
+                    shopify.product.update(id, params);
+                    /*
+                    variants.forEach(function (variant) {
+                        var variant_id = variant.id,
+                            tags = parseFloat(variant.compare_at_price),
+                            mainPrice = parseFloat(variant.price);
+
+                        var CADtoUSD = async () => {
+                            var amount = mainPrice 
+                            var compareAmnt = mainCompare
+                            var results = {
+                                "amount": amount,
+                                "id": variant_id,
+                                "compare": compareAmnt
+                            }
+                            return results
+                        };
+
+                        CADtoUSD().then(function (results) {
+                            var params = {}
+                            if (results.amount > 0) { params.price = results.amount.toFixed(2) }
+                            if (results.compare > 0) { params.compare_at_price = results.compare.toFixed(2) }
+                           var message = 'For variant: ' + variant_id + ', converted CAD' + mainPrice + ' / ' + mainCompare + ' to USD' + params.price + ' / ' + params.compare_at_price;
+                            console.log(message) // Message will show NaN/Undefined if the value is zero. This is intended.
+                            limiter.removeTokens(1, function () {
+                                shopify.productVariant.update(results.id, params).then(function (variant) {
+                                    var title = variant.title,
+                                        variant_id = variant.id;
+                                    console.log('Updated ' + title + ' ID: ' + variant_id)
+                                }).catch((err) => console.log(err));
+                            })
                         });
-                        
-                        */
-                    })
-                
+                    });
+                    
+                    */
+                })
+
             });
 
             params = products.nextPageParameters;

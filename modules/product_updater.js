@@ -423,6 +423,8 @@ function updateRates() {
         fx.base = oxr.base;
         var rate = fx(1).from(base).to(conv);
         rate = rate.toFixed(2);
+        
+        console.log('Current rate is: $'+rate )
 
         rates.get('rates')
             .find({ title: "current_rate" })

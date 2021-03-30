@@ -219,7 +219,7 @@ function convertPrice(request) {
     if (found) {
         console.log('Already on scratch disk: ' + request.id) // Function will always trigger a second webhook. 
 
-        var MINS = (60 * 1) * 1000; // 3 mins later remove so we don't trigger more webhooks.
+        var MINS = (60 * 5) * 1000; // 3 mins later remove so we don't trigger more webhooks.
 
         setTimeout(function () {
             db.get('products').remove({ id: request.id }).write()

@@ -262,7 +262,6 @@ function convertPrice(request) {
                 }
           
                 limiter.removeTokens(1, function () {
-                console.log(params)
                     shopify2.productVariant.update(results.id, params).then(function (variant) {
                         var title = variant.title,
                             variant_id = variant.id;

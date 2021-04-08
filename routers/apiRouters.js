@@ -75,12 +75,18 @@ apiRoutes.post('/convert_all_usd', function (req, res) {
   res.send('Recieved')
 })
 
-apiRoutes.post('/triggerMain', function (req, res) {
+apiRoutes.get('/triggerMain', function (req, res) {
   product_updater.convertPriceUpdate()
   res.send('Recieved')
 })
 
 apiRoutes.route('/update_rates').post(function (req, res) {
+  var request = req.body;
+  product_updater.updateRate()
+  res.send('Recieved!')
+});
+
+apiRoutes.route('/update_rates').get(function (req, res) {
   var request = req.body;
   product_updater.updateRate()
   res.send('Recieved!')

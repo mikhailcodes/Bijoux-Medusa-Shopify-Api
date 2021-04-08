@@ -38,6 +38,7 @@
     "money": "^0.2.0",
     "mongodb": "^3.6.5",
     "morgan": "^1.9.1",
+    "newrelic": "^7.3.0",
     "nodemon": "^2.0.7",
     "open-exchange-rates": "^0.3.0",
     "passport": "^0.4.0",

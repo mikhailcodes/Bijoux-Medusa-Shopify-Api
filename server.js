@@ -1,4 +1,5 @@
 require('dotenv').config()
+require('newrelic');
 //Load node.js modules
 const app = require('express')(); //Require the Express Module
 const PORT = process.env.PORT || 3000;

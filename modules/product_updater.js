@@ -414,12 +414,11 @@ function convertAllUpdate() {
 
 function updateRates() {
     oxr.latest(function () {
-        var base = 'CAD',
-            conv = 'USD';
+        var base = 'CAD', conv = 'USD';
 
         fx.rates = oxr.rates;
         fx.base = oxr.base;
-        var rate = fx(1).from(base).to(conv);
+        var rate = fx(1.02).from(base).to(conv);
         rate = rate.toFixed(2);
         
         console.log('Current rate is: $'+rate )

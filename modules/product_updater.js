@@ -360,7 +360,7 @@ function convertAllUpdate() { // Used to update all the main store product. Also
                         if (variant.compare_at_price > 0){ dbParams.compare_at_price = variant.compare_at_price}
 
                         if (query) {
-                            mongo_db.collection('product_sync').updateOne({ 'sku': variant.sku }, { $set: { 'main_price': variant.price, 'compare_at_price': variant.variant.compare_at_price } }, function (err, result) {
+                            mongo_db.collection('product_sync').updateOne({ 'sku': variant.sku }, { $set: { 'main_price': variant.price, 'compare_at_price': variant.compare_at_price } }, function (err, result) {
                                 if (err) { console.error(err) }
                                 console.log('DATABASE: Update price for ' + dbParams.sku);
                             });

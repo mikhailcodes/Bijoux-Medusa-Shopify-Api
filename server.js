@@ -11,8 +11,6 @@ if (process.env.NODE_ENV !== 'production') {
 
 const express = require('express'); //Require the Express Module
 const cors = require('cors') // Cors
-const connect = require('./modules/mongodb')
-
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -29,7 +27,6 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", 'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json');
   next();
 });
-
 
 
 app.use('/', routes); //  Connect all our routes to our application

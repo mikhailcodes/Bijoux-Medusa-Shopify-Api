@@ -1,6 +1,30 @@
 {
   "products": [
+    {
+      "id": 788032119674292900,
+      "title": "Example T-Shirt"
+    },
+    {
+      "id": 788032119674292900,
+      "title": "Example T-Shirt"
+    },
+    {
+      "id": 788032119674292900,
+      "title": "Example T-Shirt"
+    },
+    {
+      "id": 788032119674292900,
+      "title": "Example T-Shirt"
+    },
+    {
+      "id": 788032119674292900,
+      "title": "Example T-Shirt"
+    },
+    {
+      "id": 788032119674292900,
+      "title": "Example T-Shirt"
+    }
   ],
   "user": {},
-  "count": 0
+  "count": 6
 }

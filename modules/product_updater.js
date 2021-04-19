@@ -339,7 +339,7 @@ shopify.on('callLimits', (limits) => console.log(limits));
 
 function convertAllUpdate() { // Used to update all the main store product. Also connects with MongoDB
 (async () => {
-    let params = { limit: 1, fields: 'title,handle,id,variants,updated_at,tags' }; // Set needed fields 
+    let params = { limit: 5, fields: 'title,handle,id,variants,updated_at,tags' }; // Set needed fields 
     do {
         const products = await shopify.product.list(params);
         products.forEach(function (product) { // sort through each product 
